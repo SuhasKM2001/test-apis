@@ -58,9 +58,18 @@ spec:
                       schema:
                         type: object
                         properties:
-                          solution:
+                          explanation:
                             type: string
-                            description: The generated solution.
+                            description: The explanation of the recommended strategy.
+                          abc:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                label:
+                                  type: string
+                                value:
+                                  type: number
                 '400':
                   description: Bad Reequest. Invalid input data.
                 '500':
