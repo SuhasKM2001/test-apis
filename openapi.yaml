@@ -1,0 +1,58 @@
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: umat-api
+  description: App Modernization API details
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: brillio-engineering
+  system: app-modernization
+  definition: |
+    openapi: "3.0.0"
+    info:
+      version: 1.0.0
+      title: App Modernization API
+      license:
+        name: MIT
+    servers:
+      - url: https://rznah69kok.execute-api.us-east-1.amazonaws.com/dev
+    paths:
+      /handleSolutionRecommWithQuestionnaire:
+        post:
+          summary: Provides Recommended Cloud Strategy
+          description: Suggestes cloud strategy based on questionnaire responses.
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    What is the level of expertise in your development and operations teams regarding cloud-native technologies?:
+                      type: string
+                    Is there a need for rapid migration with minimal disruption to existing business operations?:
+                      type: string
+                    What is the current financial priority for this migration project?:
+                      type: string
+                    What is the data sensitivity and compliance requirements for your applications?:
+                      type: string
+                    What is the anticipated scale of your application in the next 2-3 years?:
+                      type: string
+                    How closely tied are your applications to specific on-premises infrastructure or technologies?:
+                      type: string
+          responses:
+            '200':
+              description: Solution processed successfully.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      solution:
+                        type: string
+                        description: The generated solution.
+            '400':
+              description: Bad Reequest. Invalid input data.
+            '500':
+              description: Internal Server Error.
