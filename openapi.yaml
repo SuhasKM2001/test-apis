@@ -29,30 +29,39 @@ spec:
                 schema:
                   type: object
                   properties:
-                    What is the level of expertise in your development and operations teams regarding cloud-native technologies?:
-                      type: string
-                    Is there a need for rapid migration with minimal disruption to existing business operations?:
-                      type: string
-                    What is the current financial priority for this migration project?:
-                      type: string
-                    What is the data sensitivity and compliance requirements for your applications?:
-                      type: string
-                    What is the anticipated scale of your application in the next 2-3 years?:
-                      type: string
-                    How closely tied are your applications to specific on-premises infrastructure or technologies?:
-                      type: string
-          responses:
-            '200':
-              description: Solution processed successfully.
-              content:
-                application/json:
-                  schema:
-                    type: object
-                    properties:
-                      solution:
-                        type: string
-                        description: The generated solution.
-            '400':
-              description: Bad Reequest. Invalid input data.
-            '500':
-              description: Internal Server Error.
+                    questionnaire:
+                      type: object
+                      properties:
+                        What is the level of expertise in your development and operations teams regarding cloud-native technologies?:
+                          type: string
+                          example: "High Expertise"
+                        Is there a need for rapid migration with minimal disruption to existing business operations?:
+                          type: string
+                          example: "Yes"
+                        What is the current financial priority for this migration project?:
+                          type: string
+                          example: "Lower Cost and Value Emphasis"
+                        What is the data sensitivity and compliance requirements for your applications?:
+                          type: string
+                          example: "High Sensitivity"
+                        What is the anticipated scale of your application in the next 2-3 years?:
+                          type: string
+                          example: "Rapid Growth"
+                        How closely tied are your applications to specific on-premises infrastructure or technologies?:
+                          type: string
+                          example: "Strongly Tied"
+              responses:
+                '200':
+                  description: Solution processed successfully.
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          solution:
+                            type: string
+                            description: The generated solution.
+                '400':
+                  description: Bad Reequest. Invalid input data.
+                '500':
+                  description: Internal Server Error.
