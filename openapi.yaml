@@ -83,3 +83,18 @@ spec:
               description: Bad Request. Invalid input data.
             '500':
               description: Internal Server Error.
+      
+      /deployAzureFunction:
+        get:
+          summary: Deploy Azure Function
+          description: Zips and uploads files to Azure Blob Storage and GitHub.
+          responses:
+            '200':
+              description: Deployment successful.
+              content:
+                application/json:
+                  schema:
+                    type: string
+                  example: "Files zipped and uploaded to Azure Blob Storage and GitHub successfully"
+            '500':
+              description: Internal Server Error.
