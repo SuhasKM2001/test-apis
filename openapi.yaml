@@ -50,27 +50,36 @@ spec:
                         How closely tied are your applications to specific on-premises infrastructure or technologies?:
                           type: string
                           example: "Strongly Tied"
-              responses:
-                '200':
-                  description: Solution processed successfully.
-                  content:
-                    application/json:
-                      schema:
-                        type: object
-                        properties:
-                          explanation:
-                            type: string
-                            description: The explanation of the recommended strategy.
-                          abc:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                label:
-                                  type: string
-                                value:
-                                  type: number
-                '400':
-                  description: Bad Reequest. Invalid input data.
-                '500':
-                  description: Internal Server Error.
+          responses:
+            '200':
+              description: Solution processed successfully.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      explanation:
+                        type: string
+                        description: The explanation of the recommended strategy.
+                      abc:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            label:
+                              type: string
+                            value:
+                              type: number
+                  example: # Sample response
+                    explanation: "Replatform is recommended..."
+                    abc:
+                      - label: "Rehost"
+                        value: 0.6
+                      - label: "Refactor"
+                        value: 0.7
+                      - label: "Replatform"
+                        value: 0.9
+            '400':
+              description: Bad Request. Invalid input data.
+            '500':
+              description: Internal Server Error.
