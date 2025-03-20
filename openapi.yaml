@@ -71,7 +71,7 @@ spec:
                             value:
                               type: number
                   example: # Sample response
-                    explanation: "Replatform is recommended..."
+                    explanation: "Replatform is recommended due to high expertise, need for rapid migration, cost emphasis, and strong ties to on-premises infrastructure. It balances quick migration with some modernization, addressing compliance needs and future scalability while minimizing disruption and leveraging existing expertise in cloud-native technologies."
                     abc:
                       - label: "Rehost"
                         value: 0.6
