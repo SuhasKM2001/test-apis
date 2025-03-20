@@ -16,7 +16,7 @@ spec:
       license:
         name: MIT
     servers:
-      - url: http://localhost:8080
+      - url: https://cbdfh89kqw.execute-api.us-east-1.amazonaws.com
     paths:
       /handleSolutionRecommWithQuestionnaire:
         post:
@@ -79,22 +79,31 @@ spec:
                         value: 0.7
                       - label: "Replatform"
                         value: 0.9
-            '400':
-              description: Bad Request. Invalid input data.
-            '500':
-              description: Internal Server Error.
       
-      /deployAzureFunction:
-        get:
-          summary: Deploy Azure Function
-          description: Zips and uploads files to Azure Blob Storage and GitHub.
+      /generateTerraform:
+        post:
+          summary: Generate Terraform script
+          description: Generates a Terraform script based on suggested JSON and selected cloud.
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    suggestedJson:
+                      type: string
+                      description: The suggested JSON configuration.
+                      example: "{\n  \"services\": [\n    {\n      \"name\": \"spring-boot-app\",\n      \"use\": \"Deploying web applications\",\n      \"compatible\": \"Amazon EC2\",\n      \"confidence\": 90\n    },\n    {\n      \"name\": \"In-memory databases\",\n      \"use\": \"Caching data\",\n      \"compatible\": \"Amazon EC2\",\n      \"confidence\": 80\n    },\n    {\n      \"name\": \"External databases\",\n      \"use\": \"Databases for storage\",\n      \"compatible\": \"Amazon EC2\",\n      \"confidence\": 90\n    },\n    {\n      \"name\": \"VM security dependency\",\n      \"use\": \"Virtual security rules\",\n      \"compatible\": \"Amazon EC2 Security groups\",\n      \"confidence\": 70\n    },\n    {\n      \"name\": \"VM creation dependency\",\n      \"use\": \"Isolated virtual network\",\n      \"compatible\": \"Amazon VPC\",\n      \"confidence\": 90\n    },\n    {\n      \"name\": \"VM network dependency\",\n      \"use\": \"networking of virtual machine\",\n      \"compatible\": \"Route Tables, Network Interface\",\n      \"confidence\": 80\n    },\n    {\n      \"name\": \"RBAC Dependency\",\n      \"use\": \"Authorization\",\n      \"compatible\": \"AWS IAM\",\n      \"confidence\": 90\n    }\n  ]\n}"
+                    selectedCloud:
+                      type: string
+                      description: The selected cloud provider (e.g., aws).
+                      example: "aws"
           responses:
             '200':
-              description: Deployment successful.
+              description: Terraform script generated successfully.
               content:
-                application/json:
+                text/plain:
                   schema:
                     type: string
-                  example: "Files zipped and uploaded to Azure Blob Storage and GitHub successfully"
-            '500':
-              description: Internal Server Error.
+                  example: "Certainly! I'll provide a Terraform script for AWS that corresponds to the resources mentioned in the compatibility table. Here's a Terraform script for AWS:\n\n```hcl\nprovider \"aws\" {\n  region = \"us-west-2\"  # Change this to your preferred region\n}\n\n# VPC\nresource \"aws_vpc\" \"main\" {\n  cidr_block = \"10.0.0.0/16\"\n  \n  tags = {\n    Name = \"main-vpc\"\n  }\n}\n\n# Subnet\nresource \"aws_subnet\" \"main\" {\n  vpc_id     = aws_vpc.main.id\n  cidr_block = \"10.0.1.0/24\"\n\n  tags = {\n    Name = \"main-subnet\"\n  }\n}\n\n# Security Group\nresource \"aws_security_group\" \"allow_web\" {\n  name        = \"allow_web_traffic\"\n  description = \"Allow inbound web traffic\"\n  vpc_id      = aws_vpc.main.id\n\n  ingress {\n    description = \"HTTPS\"\n    from_port   = 443\n    to_port     = 443\n    protocol    = \"tcp\"\n    cidr_blocks = [\"0.0.0.0/0\"]\n  }\n\n  ingress {\n    description = \"HTTP\"\n    from_port   = 80\n    to_port     = 80\n    protocol    = \"tcp\"\n    cidr_blocks = [\"0.0.0.0/0\"]\n  }\n\n  egress {\n    from_port   = 0\n    to_port     = 0\n    protocol    = \"-1\"\n    cidr_blocks = [\"0.0.0.0/0\"]\n  }\n\n  tags = {\n    Name = \"allow_web\"\n  }\n}\n\n# EC2 Instance for Spring Boot App\nresource \"aws_instance\" \"spring_boot_app\" {\n  ami           = \"ami-0c55b159cbfafe1f0\"  # Amazon Linux 2 AMI (HVM), SSD Volume Type\n  instance_type = \"t2.micro\"\n  subnet_id     = aws_subnet.main.id\n\n  vpc_security_group_ids = [aws_security_group.allow_web.id]\n\n  tags = {\n    Name = \"spring-boot-app\"\n  }\n}\n\n# RDS Instance for MySQL\nresource \"aws_db_instance\" \"mysql\" {\n  allocated_storage    = 20\n  storage_type         = \"gp2\"\n  engine               = \"mysql\"\n  engine_version       = \"5.7\"\n  instance_class       = \"db.t2.micro\"\n  name                 = \"mydb\"\n  username             = \"admin\"\n  password             = \"password\"  # Change this!\n  parameter_group_name = \"default.mysql5.7\"\n  skip_final_snapshot  = true\n}\n\n# RDS Instance for PostgreSQL\nresource \"aws_db_instance\" \"postgresql\" {\n  allocated_storage    = 20\n  storage_type         = \"gp2\"\n  engine               = \"postgres\"\n  engine_version       = \"12.7\"\n  instance_class       = \"db.t2.micro\"\n  name                 = \"mydb\"\n  username             = \"admin\"\n  password             = \"password\"  # Change this!\n  parameter_group_name = \"default.postgres12\"\n  skip_final_snapshot  = true\n}\n\n# ElastiCache for Caching Service\nresource \"aws_elasticache_cluster\" \"cache\" {\n  cluster_id           = \"cache-cluster\"\n  engine               = \"redis\"\n  node_type            = \"cache.t2.micro\"\n  num_cache_nodes      = 1\n  parameter_group_name = \"default.redis3.2\"\n  port                 = 6379\n}\n\n# Route Table\nresource \"aws_route_table\" \"main\" {\n  vpc_id = aws_vpc.main.id\n\n  route {\n    cidr_block = \"0.0.0.0/0\"\n    gateway_id = aws_internet_gateway.main.id\n  }\n\n  tags = {\n    Name = \"main-route-table\"\n  }\n}\n\n# Internet Gateway\nresource \"aws_internet_gateway\" \"main\" {\n  vpc_id = aws_vpc.main.id\n\n  tags = {\n    Name = \"main-igw\"\n  }\n}\n\n# IAM Role for EC2 (similar to RBAC)\nresource \"aws_iam_role\" \"ec2_role\" {\n  name = \"ec2_role\"\n\n  assume_role_policy = jsonencode({\n    Version = \"2012-10-17\"\n    Statement = [\n      {\n        Action = \"sts:AssumeRole\"\n        Effect = \"Allow\"\n        Principal = {\n          Service = \"ec2.amazonaws.com\"\n        }\n      }\n    ]\n  })\n}\n\n# Attach policy to IAM Role\nresource \"aws_iam_role_policy_attachment\" \"ec2_policy\" {\n  policy_arn = \"arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess\"\n  role       = aws_iam_role.ec2_role.name\n}\n```\n\nThis Terraform script creates the following AWS resources:\n\n1. A VPC and subnet for network isolation\n2. A security group for controlling inbound/outbound traffic\n3. An EC2 instance for the Spring Boot application\n4. RDS instances for MySQL and PostgreSQL databases\n5. An ElastiCache cluster for caching\n6. A route table and internet gateway for networking\n7. An IAM role and policy for EC2 instance permissions\n\nNote: This script is a starting point and may need adjustments based on your specific requirements. Remember to replace placeholder values (like AMI IDs, passwords, etc.) with appropriate values for your use case. Also, ensure you have the necessary permissions to create these resources in your AWS account."
